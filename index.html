@@ -3,14 +3,14 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>雄有力-雄力全構面整合版 v6.2</title>
+    <title>雄有力-雄力雲端同步整合版 v6.3</title>
     <script src="https://cdn.tailwindcss.com"></script>
     <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
     <style>
         .tab-content { display: none; }
         .tab-content.active { display: block; }
         .tab-btn.active { border-bottom: 4px solid #1e40af; color: #1e40af; font-weight: bold; }
-        #main-app, #admin-panel { display: none; } 
+        #main-app { display: none; } 
         .diet-card, .sppb-card { background: #fff; padding: 12px; border-radius: 15px; border: 1px solid #e2e8f0; margin-bottom: 10px; box-shadow: 0 1px 3px rgba(0,0,0,0.05); }
         @keyframes grow { from { width: 0; } to { width: var(--w); } }
         .bar-fill { animation: grow 1s ease-out forwards; }
@@ -21,12 +21,12 @@
 
 <div id="login-overlay" class="fixed inset-0 z-[100] bg-blue-900 flex items-center justify-center p-4">
     <div class="bg-white p-8 rounded-[2rem] shadow-2xl w-full max-w-sm text-center">
-        <img src="logo.png" alt="Logo" class="w-32 mx-auto mb-6" onerror="this.src='https://via.placeholder.com/150x50?text=雄有力'">
+        <div class="mb-6 font-black text-blue-900 text-2xl italic uppercase tracking-tighter">雄有力系統</div>
         <div class="space-y-4">
-            <h2 class="text-xl font-black text-blue-900 uppercase italic">Operator Login</h2>
+            <h2 class="text-xl font-black text-blue-900 italic">指導員 Login</h2>
             <input type="text" id="login_user" placeholder="帳號 Account" class="w-full p-3 border rounded-xl outline-none">
-            <input type="password" id="login_pass" placeholder="密碼 Password" class="w-full p-3 border rounded-xl outline-none">
-            <button onclick="checkAuth()" class="w-full bg-blue-700 text-white font-black py-4 rounded-xl shadow-lg">進入評估系統</button>
+            <input type="password" id="login_pass" placeholder="密碼 (預設888888)" class="w-full p-3 border rounded-xl outline-none">
+            <button onclick="checkAuth()" class="w-full bg-blue-700 text-white font-black py-4 rounded-xl shadow-lg hover:bg-blue-800 transition">進入系統 Enter</button>
         </div>
     </div>
 </div>
@@ -34,10 +34,7 @@
 <div id="main-app">
     <header class="bg-blue-800 text-white px-5 py-3 sticky top-0 z-50 shadow-md flex items-center justify-between no-print">
         <div class="flex items-center gap-3">
-            <div class="bg-white rounded p-1 w-10 h-10 flex items-center justify-center shadow-inner">
-                <img src="logo.png" alt="Logo" class="max-h-full" onerror="this.style.display='none'">
-            </div>
-            <h1 class="text-lg font-bold italic uppercase tracking-tighter">雄力版全人評估 <span id="display_operator" class="text-[10px] font-normal opacity-70 ml-2"></span></h1>
+            <h1 class="text-lg font-bold italic uppercase tracking-tighter">雄有力全人健促 <span id="display_operator" class="text-[10px] font-normal opacity-70 ml-2"></span></h1>
         </div>
         <button onclick="logout()" class="text-[10px] bg-red-500 text-white px-3 py-1 rounded-full font-bold shadow-sm uppercase italic">Logout</button>
     </header>
@@ -45,7 +42,7 @@
     <nav class="flex overflow-x-auto bg-white border-b sticky top-[64px] z-40 no-print shadow-sm no-scrollbar">
         <button onclick="showTab('base')" id="btn-base" class="tab-btn min-w-[90px] p-4 text-xs active">1.基本資料</button>
         <button onclick="showTab('cog')" id="btn-cog" class="tab-btn min-w-[90px] p-4 text-xs">2.認知記憶</button>
-        <button onclick="showTab('phy')" id="btn-phy" class="tab-btn min-w-[90px] p-4 text-xs">3.肌力表現</button>
+        <button onclick="showTab('phy')" id="btn-phy" class="tab-btn min-w-[90px] p-4 text-xs">3.肌力基礎</button>
         <button onclick="showTab('sppb')" id="btn-sppb" class="tab-btn min-w-[90px] p-4 text-xs text-blue-600 font-bold italic">4.SPPB檢測</button>
         <button onclick="showTab('diet')" id="btn-diet" class="tab-btn min-w-[90px] p-4 text-xs text-green-700 font-bold italic">5.地中海飲食</button>
         <button onclick="showTab('psy')" id="btn-psy" class="tab-btn min-w-[90px] p-4 text-xs">6.心理社會</button>
@@ -66,34 +63,25 @@
                     <div class="col-span-2">姓名 Name: <input type="text" id="b_name" class="w-full p-2 border rounded bg-slate-50 outline-none"></div>
                     <div>身高 Height(cm): <input type="number" id="b_height" step="0.1" class="w-full p-2 border rounded bg-slate-50"></div>
                     <div>體重 Weight(kg): <input type="number" id="b_weight" step="0.1" class="w-full p-2 border rounded bg-slate-50"></div>
-                    <div>性別 Gender: <select id="b_gender" class="w-full p-2 border rounded"><option value="1">男 Male</option><option value="2">女 Female</option></select></div>
-                    <div>學歷 Edu: 
-                        <select id="b_edu" class="w-full p-2 border rounded">
-                            <option value="未識字">未識字 Illiterate</option>
-                            <option value="國小">國小 Elementary</option>
-                            <option value="國中">國中 Junior High</option>
-                            <option value="高中職">高中職 Senior High</option>
-                            <option value="大學以上">大學以上 University</option>
-                        </select>
-                    </div>
+                    <div>性別 Gender: <select id="b_gender" onchange="judgePhyLegacy()" class="w-full p-2 border rounded"><option value="1">男 Male</option><option value="2">女 Female</option></select></div>
+                    <div>學歷 Edu: <select id="b_edu" class="w-full p-2 border rounded"><option value="未識字">未識字 Illiterate</option><option value="國小">國小 Elementary</option><option value="國中">國中 Junior High</option><option value="高中職">高中職 Senior High</option><option value="大學以上">大學以上 University</option></select></div>
                     <div class="col-span-2">據點單位 Location: <input type="text" id="b_loc" class="w-full p-2 border rounded bg-slate-50"></div>
-                    <input type="hidden" id="b_age" value="65">
                 </div>
             </div>
         </section>
 
         <section id="tab-cog" class="tab-content space-y-4">
-            <div class="bg-white p-6 rounded-3xl border border-slate-200 shadow-sm">
+            <div class="bg-white p-6 rounded-3xl border border-slate-200">
                 <h2 class="font-bold text-blue-900 mb-4 border-b pb-2 italic text-lg">認知功能測試 Memory</h2>
                 <div class="flex gap-2 mb-4">
-                    <button onclick="setTheme('A')" class="flex-1 py-2 bg-slate-100 rounded-xl text-xs font-bold border hover:bg-blue-100 transition">題組 A</button>
-                    <button onclick="setTheme('B')" class="flex-1 py-2 bg-slate-100 rounded-xl text-xs font-bold border hover:bg-blue-100 transition">題組 B</button>
-                    <button onclick="setTheme('C')" class="flex-1 py-2 bg-slate-100 rounded-xl text-xs font-bold border hover:bg-blue-100 transition">題組 C</button>
+                    <button onclick="setTheme('A')" class="flex-1 py-2 bg-slate-100 rounded-xl text-xs font-bold border hover:bg-blue-100">題組 A</button>
+                    <button onclick="setTheme('B')" class="flex-1 py-2 bg-slate-100 rounded-xl text-xs font-bold border hover:bg-blue-100">題組 B</button>
+                    <button onclick="setTheme('C')" class="flex-1 py-2 bg-slate-100 rounded-xl text-xs font-bold border hover:bg-blue-100">題組 C</button>
                 </div>
-                <div id="word-display" class="p-3 bg-blue-50 text-blue-800 text-sm text-center rounded-xl hidden font-black mb-4 border border-blue-100 shadow-inner"></div>
-                <div id="memory-grid" class="space-y-2 mb-4 italic"></div>
+                <div id="word-display" class="p-3 bg-blue-50 text-blue-800 text-sm text-center rounded-xl hidden font-black mb-4"></div>
+                <div id="memory-grid" class="space-y-2 mb-4"></div>
                 <div class="pt-4 border-t">
-                    <label class="text-[10px] text-slate-400 font-bold uppercase">時間定向感得分 Orientation</label>
+                    <label class="text-[10px] text-slate-400 font-bold uppercase">時間定向感 Orientation</label>
                     <select id="c_time" class="w-full p-2 border rounded font-bold text-sm mt-1"><option value="3">4項正確 (3分)</option><option value="2">3項正確 (2分)</option><option value="1">1-2項正確 (1分)</option><option value="0">皆錯 (0分)</option></select>
                 </div>
             </div>
@@ -101,14 +89,14 @@
 
         <section id="tab-phy" class="tab-content space-y-4">
             <div class="bg-white p-6 rounded-3xl border border-blue-100 shadow-md">
-                <h2 class="font-bold text-blue-900 mb-4 border-b pb-2">肌力評估 Strength</h2>
-                <div class="space-y-4">
-                    <div class="p-4 bg-slate-50 rounded-2xl font-bold">
-                        <label class="text-xs uppercase block mb-2 tracking-widest">30秒椅子坐立 Chair Stand (次數)</label>
+                <h2 class="font-bold text-blue-900 mb-4 border-b pb-2 italic">肌力評估 Strength</h2>
+                <div class="space-y-4 font-bold text-xs">
+                    <div class="p-4 bg-slate-50 rounded-2xl">
+                        <label class="block mb-2 uppercase">30秒椅子坐立 Chair Stand (次)</label>
                         <div class="flex items-center gap-4"><input type="number" id="p_chair" oninput="judgePhyLegacy()" class="flex-1 p-3 border rounded-xl text-xl font-black text-blue-700 outline-none" placeholder="0"><div id="r_chair" class="w-32 text-center font-bold text-[9px] text-blue-800 bg-white py-3 rounded-xl border">等待數據...</div></div>
                     </div>
-                    <div class="p-4 bg-slate-50 rounded-2xl font-bold">
-                        <label class="text-xs uppercase block mb-2 tracking-widest">手臂屈舉 Arm Curl (次數)</label>
+                    <div class="p-4 bg-slate-50 rounded-2xl">
+                        <label class="block mb-2 uppercase">手臂屈舉 Arm Curl (次)</label>
                         <div class="flex items-center gap-4"><input type="number" id="p_arm" oninput="judgePhyLegacy()" class="flex-1 p-3 border rounded-xl text-xl font-black text-blue-700 outline-none" placeholder="0"><div id="r_arm" class="w-32 text-center font-bold text-[9px] text-blue-800 bg-white py-3 rounded-xl border">等待數據...</div></div>
                     </div>
                 </div>
@@ -116,149 +104,101 @@
         </section>
 
         <section id="tab-sppb" class="tab-content space-y-4">
-            <div class="bg-blue-800 text-white p-5 rounded-3xl shadow-lg italic">
-                <h2 class="font-black text-lg uppercase tracking-widest"><i class="fas fa-shoe-prints mr-2"></i>SPPB 簡易身體功能量表</h2>
-            </div>
+            <div class="bg-blue-800 text-white p-5 rounded-3xl shadow-lg italic uppercase font-black tracking-widest"><i class="fas fa-shoe-prints mr-2"></i>SPPB 行動能力量表</div>
             <div class="sppb-card text-xs font-bold"><p class="text-sm font-black text-blue-900 mb-2 border-l-4 border-blue-600 pl-2">1. 平衡 Balance (各10秒)</p>
                 <div class="grid grid-cols-2 gap-3 mb-2">
-                    <div>並排 Side-by-side: <input type="number" id="sppb_b1" oninput="calcSPPB()" class="w-full p-1 border rounded" placeholder="秒"></div>
-                    <div>半並排 Semi-Tandem: <input type="number" id="sppb_b2" oninput="calcSPPB()" class="w-full p-1 border rounded" placeholder="秒"></div>
+                    <div>並排: <input type="number" id="sppb_b1" oninput="calcSPPB()" class="w-full p-1 border rounded" placeholder="秒"></div>
+                    <div>半並排: <input type="number" id="sppb_b2" oninput="calcSPPB()" class="w-full p-1 border rounded" placeholder="秒"></div>
                 </div>
                 <div>直線 Tandem stand: <input type="number" id="sppb_b3" oninput="calcSPPB()" class="w-1/2 p-1 border rounded" placeholder="秒"></div>
             </div>
-            <div class="sppb-card text-xs font-bold"><p class="text-sm font-black text-blue-900 mb-2 border-l-4 border-blue-600 pl-2">2. 4米步行 Gait Speed (秒)</p>
-                <div>秒數 Time(sec): <input type="number" id="sppb_w1" step="0.01" oninput="calcSPPB()" class="w-1/2 p-1 border rounded font-black text-blue-700" placeholder="0.00"></div>
-            </div>
-            <div class="sppb-card text-xs font-bold"><p class="text-sm font-black text-blue-900 mb-2 border-l-4 border-blue-600 pl-2">3. 5次起坐 Chair Stand (5x)</p>
-                <div>秒數 Time(sec): <input type="number" id="sppb_c1" step="0.1" oninput="calcSPPB()" class="w-1/2 p-1 border rounded font-black text-blue-700" placeholder="0.0"></div>
-            </div>
-            <div class="p-4 bg-blue-50 rounded-2xl text-center border-2 border-blue-200 font-black italic">
-                SPPB 總分 Score: <span id="sppb_total_live" class="text-xl">0</span> / 12
-            </div>
+            <div class="sppb-card text-xs font-bold">2. 4米步行 (秒): <input type="number" id="sppb_w1" step="0.01" oninput="calcSPPB()" class="w-24 p-1 border rounded ml-2 font-black text-blue-700"></div>
+            <div class="sppb-card text-xs font-bold">3. 5次起坐 (秒): <input type="number" id="sppb_c1" step="0.1" oninput="calcSPPB()" class="w-24 p-1 border rounded ml-2 font-black text-blue-700"></div>
+            <div class="p-4 bg-blue-50 rounded-2xl text-center border-2 border-blue-200 font-black italic">SPPB Score: <span id="sppb_total_live" class="text-xl">0</span> / 12</div>
         </section>
 
         <section id="tab-diet" class="tab-content space-y-4">
-            <div class="bg-green-700 text-white p-5 rounded-3xl shadow-lg flex justify-between items-center italic">
-                <h2 class="font-black text-lg uppercase tracking-widest"><i class="fas fa-utensils mr-2"></i>Mediterranean Diet</h2>
+            <div class="bg-green-700 text-white p-5 rounded-3xl shadow-lg font-black uppercase italic tracking-widest flex justify-between items-center">
+                <h2><i class="fas fa-utensils mr-2"></i>Mediterranean Diet</h2>
             </div>
             <div id="diet-container"></div>
         </section>
 
         <section id="tab-psy" class="tab-content space-y-4">
             <div class="bg-white p-6 rounded-3xl border border-purple-100 shadow-sm font-bold text-sm italic">
-                <h2 class="font-bold text-purple-900 mb-4 border-b pb-2 uppercase">Psychosocial 心理健康</h2>
+                <h2 class="font-black text-purple-900 mb-4 border-b pb-2 italic text-lg uppercase">Psychosocial 心理健康</h2>
                 <div>親友互動: <select id="ps_1" class="w-full p-2 border rounded-lg mb-3 font-bold"><option value="3">5-7天 (3分)</option><option value="2">1-4天 (2分)</option><option value="0">沒有 (0分)</option></select></div>
-                <div>睡眠困擾: <select id="ps_2" class="w-full p-2 border rounded-lg mb-3 font-bold"><option value="3">從未 (3分)</option><option value="1">有時 (1分)</option><option value="0">經常 (0分)</option></select></div>
+                <div>睡眠品質: <select id="ps_2" class="w-full p-2 border rounded-lg mb-3 font-bold"><option value="3">從未 (3分)</option><option value="1">有時 (1分)</option><option value="0">經常 (0分)</option></select></div>
                 <div>孤獨感受: <select id="ps_3" class="w-full p-2 border rounded-lg font-bold"><option value="3">從不 (3分)</option><option value="1">常常 (1分)</option><option value="0">總是 (0分)</option></select></div>
             </div>
         </section>
 
         <section id="tab-result" class="tab-content space-y-6">
-            <div class="no-print p-6 bg-blue-50 rounded-[2.5rem] border-2 border-blue-200 text-center shadow-xl">
-                <button onclick="generateFinalReport()" class="w-full bg-blue-700 text-white font-black py-5 rounded-2xl shadow-2xl hover:scale-[1.01] transition uppercase tracking-widest italic font-serif">Generate Progress Report</button>
+            <div class="no-print p-6 bg-blue-50 rounded-[2.5rem] border-2 border-blue-200 text-center shadow-xl space-y-4">
+                <button onclick="generateFinalReport()" class="w-full bg-blue-700 text-white font-black py-5 rounded-2xl shadow-lg uppercase italic font-serif">1. 產生視覺化報告 Generate</button>
+                <button id="sync-btn" onclick="submitToGoogle()" class="w-full bg-green-600 text-white font-black py-4 rounded-2xl shadow-lg hover:bg-green-700 transition uppercase italic font-serif hidden">2. 同步雲端資料庫 Sync to Sheets</button>
             </div>
             
             <div id="final-report" class="hidden bg-white p-10 rounded-[3rem] border-t-[14px] border-blue-800 shadow-2xl relative overflow-hidden italic">
-                <div class="flex justify-center mb-6 font-black text-blue-900 opacity-20 text-2xl tracking-tighter uppercase italic">雄有力評估中心</div>
-                <h2 class="text-3xl font-black text-center text-blue-900 border-b-2 pb-6 mb-8 uppercase font-serif tracking-widest">成效報告 Progress Report</h2>
+                <div class="flex justify-center mb-6 font-black text-blue-900 opacity-20 text-2xl uppercase italic">雄有力研究評估</div>
+                <h2 class="text-3xl font-black text-center text-blue-900 border-b-2 pb-6 mb-8 uppercase font-serif tracking-widest italic">Progress Report</h2>
                 
                 <div id="test_badge" class="absolute top-8 right-8 px-4 py-1 rounded-full text-[10px] font-black uppercase text-white shadow-md italic">--</div>
 
-                <div class="bg-gradient-to-br from-blue-700 to-blue-900 text-white p-8 rounded-[2.5rem] mb-10 shadow-xl">
-                    <div class="flex justify-between items-end italic">
-                        <div><p class="text-[10px] font-bold opacity-75 uppercase tracking-widest">健康狀態 Health Status</p><p id="health_status" class="text-2xl font-black italic">--</p></div>
-                        <div class="text-right"><p class="text-[10px] font-bold opacity-75 uppercase">加權總分 Total Score</p><p id="total_score_display" class="text-5xl font-black italic">0</p></div>
-                    </div>
-                </div>
-
-                <div class="p-6 border-2 border-blue-100 rounded-[2.5rem] bg-blue-50/30 mb-10 shadow-inner">
-                    <div class="flex justify-between items-center mb-4">
-                        <h3 class="text-sm font-black text-blue-800 uppercase italic flex items-center gap-2 tracking-tighter"><i class="fas fa-shoe-prints text-blue-500"></i> 行動機能 Mobility (SPPB)</h3>
-                        <span id="sppb_status_text" class="px-3 py-1 rounded-full text-[9px] font-black text-white italic bg-blue-600">--</span>
-                    </div>
-                    <div class="flex justify-between items-end">
-                        <p id="sppb_desc_text" class="text-[11px] font-bold text-blue-900 pr-4">--</p>
-                        <p class="text-4xl font-black text-blue-700 italic"><span id="sppb_final_score">0</span> / 12</p>
-                    </div>
-                </div>
-
-                <div class="p-6 border-2 border-green-100 rounded-[2.5rem] bg-green-50/30 mb-10 shadow-inner">
-                    <div class="flex justify-between items-center mb-6 border-b border-green-200 pb-3">
-                        <h3 class="text-sm font-black text-green-800 uppercase italic flex items-center gap-2 tracking-tighter"><i class="fas fa-utensils text-green-500"></i> 飲食分析 Nutrition Insight</h3>
-                        <span id="diet_tag" class="px-2 py-0.5 rounded-full text-[9px] font-black text-white bg-slate-400 italic">--</span>
-                    </div>
-                    <div id="diet_detail_analysis" class="space-y-6"></div>
-                    <div class="mt-8 pt-6 border-t border-green-200 text-[11px] text-green-800 font-bold italic leading-relaxed">
-                        ● 地中海飲食遵從度越高，通常與較低 LDL、三酸甘油脂、血壓及 HbA1c 有關。<br>
-                        (Higher adherence correlates with lower LDL, TG, BP, and HbA1c.)
-                    </div>
+                <div class="bg-gradient-to-br from-blue-700 to-blue-900 text-white p-8 rounded-[2.5rem] mb-10 shadow-xl flex justify-between items-end">
+                    <div><p class="text-[10px] font-bold opacity-75 uppercase tracking-widest">健康狀態 Health Status</p><p id="health_status" class="text-2xl font-black italic">--</p></div>
+                    <div class="text-right"><p class="text-[10px] font-bold opacity-75 uppercase">加權總分 Total Score</p><p id="total_score_display" class="text-5xl font-black italic leading-none">0</p></div>
                 </div>
 
                 <div id="metric_comparison" class="space-y-8 mb-10"></div>
 
-                <div class="bg-slate-50 p-6 rounded-2xl border text-[10px] grid grid-cols-2 gap-4 text-slate-400 font-bold uppercase shadow-sm italic font-serif">
-                    <div>姓名 Name: <span id="rn" class="text-slate-800 font-black italic">--</span></div>
-                    <div>BMI Score: <span id="rbmi" class="text-slate-800 font-black italic">--</span></div>
-                    <div>學歷 Edu: <span id="re" class="text-slate-800 font-black italic">--</span></div>
-                    <div>據點 Loc: <span id="rl" class="text-slate-800 font-black italic">--</span></div>
-                    <div class="col-span-2 border-t pt-2">分析時間 Time: <span id="rt" class="text-slate-800 font-black italic">--</span></div>
+                <div class="p-6 border-2 border-blue-100 rounded-[2.5rem] bg-blue-50/30 mb-10 shadow-inner">
+                    <div class="flex justify-between items-center mb-4"><h3 class="text-sm font-black text-blue-800 italic uppercase"><i class="fas fa-shoe-prints"></i> 行動機能評估 (SPPB)</h3><span id="sppb_status_text" class="px-3 py-1 rounded-full text-[9px] font-black text-white italic bg-blue-600">--</span></div>
+                    <div class="flex justify-between items-end italic"><p id="sppb_desc_text" class="text-[11px] font-bold text-blue-900">--</p><p class="text-4xl font-black text-blue-700"><span id="sppb_final_score">0</span> / 12</p></div>
                 </div>
 
-                <button onclick="window.print()" class="w-full bg-slate-900 text-white py-5 rounded-2xl font-black no-print text-[11px] uppercase tracking-widest shadow-xl font-serif mt-10">Save Bilingual Analysis as PDF</button>
+                <div class="p-6 border-2 border-green-100 rounded-[2.5rem] bg-green-50/30 mb-10 shadow-inner">
+                    <div class="flex justify-between items-center mb-6 border-b border-green-200 pb-3"><h3 class="text-sm font-black text-green-800 italic uppercase"><i class="fas fa-utensils"></i> 飲食分析 Nutrition Insight</h3><span id="diet_tag" class="px-2 py-0.5 rounded-full text-[9px] font-black text-white bg-slate-400 italic">--</span></div>
+                    <div id="diet_detail_analysis" class="space-y-6"></div>
+                </div>
+
+                <div class="bg-slate-50 p-6 rounded-2xl border text-[10px] grid grid-cols-2 gap-4 text-slate-400 font-bold uppercase shadow-sm italic font-serif">
+                    <div>姓名 Name: <span id="rn" class="text-slate-800 font-black">--</span></div>
+                    <div>BMI Score: <span id="rbmi" class="text-slate-800 font-black">--</span></div>
+                    <div>學歷 Edu: <span id="re" class="text-slate-800 font-black">--</span></div>
+                    <div>據點 Loc: <span id="rl" class="text-slate-800 font-black">--</span></div>
+                    <div class="col-span-2 border-t pt-2">時間 Time: <span id="rt" class="text-slate-800 font-black">--</span></div>
+                </div>
+                <button onclick="window.print()" class="w-full bg-slate-900 text-white py-5 rounded-2xl font-black no-print text-[11px] uppercase tracking-widest mt-10 font-serif shadow-xl italic">Save Bilingual Analysis as PDF</button>
             </div>
         </section>
     </main>
 </div>
 
 <script>
-    // 🔐 管理與歷史
-    const DEFAULT_ADMIN = { user: "admin", pass: "888888" };
-    function getLocalUsers() { const u = localStorage.getItem('trainer_db'); return u ? JSON.parse(u) : {[DEFAULT_ADMIN.user]: DEFAULT_ADMIN.pass}; }
-    function getHistory() { const h = localStorage.getItem('雄力_v62_stable'); return h ? JSON.parse(h) : {}; }
-    function saveHistory(name, type, scores, dietRaw, sppbRaw, info) {
-        const h = getHistory(); if(!h[name]) h[name] = {};
-        h[name][type.toLowerCase()] = { date: new Date().toLocaleString(), scores: scores, dietRaw: dietRaw, sppbRaw: sppbRaw, info: info };
-        localStorage.setItem('雄力_v62_stable', JSON.stringify(h));
-    }
-    function checkAuth() { const u = document.getElementById('login_user').value.trim(), p = document.getElementById('login_pass').value.trim(); if (getLocalUsers()[u] === p) { enterApp(u); } else { alert("Login Failed"); } }
-    function enterApp(u) { document.getElementById('login-overlay').style.display='none'; document.getElementById('main-app').style.display='block'; sessionStorage.setItem('current_op', u); document.getElementById('display_operator').innerText = "| " + u; }
+    const SCRIPT_URL = 'https://script.google.com/macros/s/AKfycbxtY6KHe2Pol1XnP2RrklUpJGts9mjy6TRD59KN96EKoXOf5nU6J44SsfX21kK3viNa/exec';
+
+    function checkAuth() { const u = document.getElementById('login_user').value.trim(), p = document.getElementById('login_pass').value.trim(); if(p === '888888'){ enterApp(u); } else { alert("Login Failed"); } }
+    function enterApp(u) { document.getElementById('login-overlay').style.display='none'; document.getElementById('main-app').style.display='block'; sessionStorage.setItem('op', u); document.getElementById('display_operator').innerText = "| 指導員: " + u; }
     function logout() { sessionStorage.clear(); location.reload(); }
 
-    // 🧠 認知記憶邏輯 [修復: 補齊題組 C 並修復運作]
     function setTheme(t) {
-        const themes = { 
-            'A':['鼻子','石頭','學校','可愛','紅色'], 
-            'B':['臉孔','玻璃','醫院','善良','藍色'],
-            'C':['手指','塑膠','公園','大方','綠色'] 
-        };
+        const themes = { 'A':['鼻子','石頭','學校','可愛','紅色'], 'B':['臉孔','玻璃','醫院','善良','藍色'], 'C':['手指','塑膠','公園','大方','綠色'] };
         const display = document.getElementById('word-display');
-        display.innerText = "題組組別 " + t + " 單字：" + themes[t].join('、');
+        display.innerText = "題組 " + t + " 單字：" + themes[t].join('、');
         display.classList.remove('hidden');
-        document.getElementById('memory-grid').innerHTML = themes[t].map((w, i) => `
-            <div class="flex justify-between items-center bg-slate-50 p-2 border rounded-xl text-sm mb-1 font-bold">
-                <span>${w}</span>
-                <select id="dm_${i}" class="text-xs border rounded-md font-bold text-blue-700 outline-none">
-                    <option value="3">未提示 Correct</option>
-                    <option value="2">類別提示 Category</option>
-                    <option value="1">選擇提示 Choice</option>
-                    <option value="0">錯誤 Error</option>
-                </select>
-            </div>`).join('');
+        document.getElementById('memory-grid').innerHTML = themes[t].map((w, i) => `<div class="flex justify-between items-center bg-slate-50 p-2 border rounded-xl text-sm mb-1 font-bold"><span>${w}</span><select id="dm_${i}" class="text-xs border rounded-md font-bold text-blue-700 outline-none"><option value="3">正確 Correct</option><option value="2">類別 Category</option><option value="1">選擇 Choice</option><option value="0">錯誤 Error</option></select></div>`).join('');
     }
 
-    // 🏃 SPPB 計算
     function calcSPPB() {
-        let b = 0; const b1 = parseFloat(document.getElementById('sppb_b1').value)||0, b2 = parseFloat(document.getElementById('sppb_b2').value)||0, b3 = parseFloat(document.getElementById('sppb_b3').value)||0;
+        let b = 0, b1 = parseFloat(document.getElementById('sppb_b1').value)||0, b2 = parseFloat(document.getElementById('sppb_b2').value)||0, b3 = parseFloat(document.getElementById('sppb_b3').value)||0;
         if(b1 >= 10) b += 1; if(b2 >= 10) b += 1; if(b3 >= 10) b += 2; else if(b3 >= 3) b += 1;
-        
-        let w = 0; const wSec = parseFloat(document.getElementById('sppb_w1').value)||0;
-        if(wSec > 0) { if(wSec < 4.82) w = 4; else if(wSec <= 6.2) w = 3; else if(wSec <= 8.7) w = 2; else w = 1; }
-        
-        let c = 0; const cSec = parseFloat(document.getElementById('sppb_c1').value)||0;
-        if(cSec > 0) { if(cSec < 11.19) c = 4; else if(cSec <= 13.69) c = 3; else if(cSec <= 16.69) c = 2; else if(cSec <= 59.9) c = 1; }
-        
-        const total = b + w + c; document.getElementById('sppb_total_live').innerText = total;
-        return { total, b, w, c };
+        let w = 0, wS = parseFloat(document.getElementById('sppb_w1').value)||0;
+        if(wS > 0) { if(wS < 4.82) w = 4; else if(wS <= 6.2) w = 3; else if(wS <= 8.7) w = 2; else w = 1; }
+        let c = 0, cS = parseFloat(document.getElementById('sppb_c1').value)||0;
+        if(cS > 0) { if(cS < 11.19) c = 4; else if(cS <= 13.69) c = 3; else if(cS <= 16.69) c = 2; else if(cS <= 59.9) c = 1; }
+        document.getElementById('sppb_total_live').innerText = b+w+c;
+        return { total: b+w+c };
     }
 
     function judgePhyLegacy() {
@@ -267,78 +207,78 @@
         document.getElementById('r_arm').innerText = v2 >= 16 ? "很好 Excellent (4分)" : (v2 >= 11 ? "尚好 Good (3分)" : "普通 Fair (2分)");
     }
 
-    // 🥗 飲食評語
-    const GUIDELINES = [
-        { q: "1. 水果攝取 Fruit", advice: ["🔴 水果不足 Insufficient", "🟡 水果尚可 Fair", "🟢 水果良好 Excellent"] },
-        { q: "2. 蔬菜攝取 Veg", advice: ["🔴 蔬菜不足 Insufficient", "🟡 蔬菜尚可 Fair", "🟢 蔬菜充足 Excellent"] },
-        { q: "3. 豆類攝取 Legume", advice: ["🔴 豆類不足 Insufficient", "🟡 豆類尚可 Fair", "🟢 豆類良好 Excellent"] },
-        { q: "4. 全穀類攝取 Grains", advice: ["🔴 全穀類不足 Insufficient", "🟡 全穀類尚可 Fair", "🟢 全穀類良好 Excellent"] },
-        { q: "5. 魚類攝取 Fish", advice: ["🔴 魚類不足 Insufficient", "🟡 魚類尚可 Fair", "🟢 魚類良好 Excellent"] },
-        { q: "6. 紅肉攝取 Red Meat", advice: ["🔴 紅肉過多 Excessive", "🟡 紅肉接近量 Near limit", "🟢 紅肉良好 Excellent"] },
-        { q: "7. 奶製品攝取 Milk", advice: ["🔴 奶製品偏多 Excessive", "🟡 奶製品尚可 Fair", "🟢 奶製品適量 Excellent"] },
-        { q: "8. 酒精攝取 Alcohol", advice: ["🔴 酒精偏多 Excessive", "🟡 酒精尚可 Fair", "🟢 酒精良好 Excellent"] },
-        { q: "9. 植物油使用 Oil", advice: ["🔴 植物油不足 Insufficient", "🟡 植物油尚可 Fair", "🟢 植物油良好 Excellent"] }
-    ];
-    document.getElementById('diet-container').innerHTML = GUIDELINES.map((it, i) => `<div class="diet-card"><p class="text-[11px] font-black text-slate-700 mb-1 italic">${i+1}. ${it.q}</p><select id="dq_${i}" class="w-full p-2 border rounded-lg bg-slate-50 text-blue-800 text-[11px] font-bold outline-none"><option value="0">Improve (0分)</option><option value="1">Fair (1分)</option><option value="2">Excellent (2分)</option></select></div>`).join('');
+    const GUIDELINES = ["水果 Fruit", "蔬菜 Veg", "豆類 Legume", "全穀 Grains", "魚類 Fish", "紅肉 Red Meat", "奶製品 Milk", "酒精 Alcohol", "植物油 Oil"];
+    document.getElementById('diet-container').innerHTML = GUIDELINES.map((it, i) => `<div class="diet-card"><p class="text-[11px] font-black italic mb-1">${i+1}. ${it}</p><select id="dq_${i}" class="w-full p-2 border rounded-lg bg-slate-50 text-blue-800 text-[11px] font-bold outline-none"><option value="0">Improve (0分)</option><option value="1">Fair (1分)</option><option value="2">Excellent (2分)</option></select></div>`).join('');
 
-    // 📊 報表引擎 [終極修復]
     function generateFinalReport() {
-        const report = document.getElementById('final-report');
-        report.classList.remove('hidden');
-        
-        const name = document.getElementById('b_name').value.trim() || "未命名 Noname";
-        const testType = document.getElementById('b_test_type').value;
+        document.getElementById('final-report').classList.remove('hidden');
+        document.getElementById('sync-btn').classList.remove('hidden');
+        const name = document.getElementById('b_name').value || "未命名";
         const h = parseFloat(document.getElementById('b_height').value)/100 || 0, w = parseFloat(document.getElementById('b_weight').value)||0;
-        const bmiVal = h > 0 ? (w/(h*h)).toFixed(1) : "--";
+        const bmi = h > 0 ? (w/(h*h)).toFixed(1) : "--";
 
         document.getElementById('rn').innerText = name;
         document.getElementById('re').innerText = document.getElementById('b_edu').value;
+        document.getElementById('rbmi').innerText = bmi;
         document.getElementById('rl').innerText = document.getElementById('b_loc').value || "N/A";
         document.getElementById('rt').innerText = new Date().toLocaleString();
-        document.getElementById('rbmi').innerText = bmiVal;
 
-        const safeGet = (id) => { const el = document.getElementById(id); if(!el) return 0; const m = el.innerText.match(/\d+/); return m ? parseInt(m[0]) : 0; };
-
-        let dietRaw = []; let dietSum = 0; for(let i=0; i<9; i++) { let v = parseInt(document.getElementById('dq_'+i).value)||0; dietRaw.push(v); dietSum += v; }
+        let dietSum = 0; for(let i=0; i<9; i++) dietSum += parseInt(document.getElementById('dq_'+i).value);
         const sppb = calcSPPB();
-        const phySum = parseInt(safeGet('r_chair')) + parseInt(safeGet('r_arm'));
-        let cogRec = 0; for(let i=0; i<5; i++) { cogRec += parseInt(document.getElementById('dm_'+i)?.value||0); }
+        let cogRec = 0; for(let i=0; i<5; i++) cogRec += parseInt(document.getElementById('dm_'+i)?.value||0);
         const cogSum = (cogRec >= 10 ? 3 : (cogRec >= 5 ? 2 : 1)) + parseInt(document.getElementById('c_time').value);
         const psSum = parseInt(document.getElementById('ps_1').value) + parseInt(document.getElementById('ps_2').value) + parseInt(document.getElementById('ps_3').value);
+        const phySum = (parseInt(document.getElementById('p_chair').value)>=15?4:2) + (parseInt(document.getElementById('p_arm').value)>=16?4:2);
 
-        const scores = { diet:(dietSum/18)*100, sppb:(sppb.total/12)*100, phy:(phySum/8)*100, cog:(cogSum/6)*100, ps:(psSum/9)*100 };
-        saveHistory(name, testType, scores, dietRaw, sppb, { loc: document.getElementById('b_loc').value, bmi: bmiVal });
-        let pre = null; if(testType === "Post") { const history = getHistory(); if(history[name] && history[name]['pre']) pre = history[name]['pre']; }
-
+        const scores = { diet:(dietSum/18)*100, sppb:(sppb.total/12)*100, cog:(cogSum/6)*100, ps:(psSum/9)*100, phy:(phySum/8)*100 };
         document.getElementById('total_score_display').innerText = Math.round((scores.diet+scores.sppb+scores.cog+scores.ps)/4);
-        document.getElementById('health_status').innerText = (scores.diet+scores.sppb+scores.cog+scores.ps)/4 >= 70 ? "機能維護優良 Good" : "具備風險 Risk";
-        document.getElementById('test_badge').innerText = testType === 'Pre' ? '前測 Pre' : '後測 Post';
-        document.getElementById('test_badge').className = `absolute top-8 right-8 px-4 py-1 rounded-full text-[10px] font-black uppercase text-white shadow-md italic ${testType==='Pre'?'bg-slate-400':'bg-blue-600'}`;
-
+        document.getElementById('health_status').innerText = (scores.diet+scores.sppb+scores.cog+scores.ps)/4 >= 70 ? "機能優良 Good" : "具備風險 Risk";
         document.getElementById('sppb_final_score').innerText = sppb.total;
-        document.getElementById('sppb_status_text').innerText = sppb.total >= 10 ? "行動正常 Normal" : "行動風險 Risk";
-        document.getElementById('sppb_desc_text').innerText = sppb.total >= 10 ? "身體機能表現正常 Mobility Normal" : "具備行動障礙風險 Mobility Impaired";
-
+        document.getElementById('sppb_status_text').innerText = sppb.total >= 10 ? "正常 Normal" : "障礙 Risk";
         document.getElementById('diet_tag').innerText = dietSum >= 11 ? "高遵從度 High" : (dietSum >= 7 ? "中遵從度 Mod" : "低遵從度 Low");
-        document.getElementById('diet_detail_analysis').innerHTML = GUIDELINES.map((item, i) => {
-            const curV = dietRaw[i], preV = pre ? pre.dietRaw[i] : null;
-            return `<div class="pb-4 border-b border-slate-100 font-bold italic">
-                <div class="flex justify-between items-center mb-1 text-[11px]"><span class="text-slate-800">${item.q} ${preV!==null && curV>preV?'↑':''}</span><span class="text-[9px] text-slate-400 uppercase italic font-black">${preV!==null?`Pre:${preV} → `:''}Post:${curV}</span></div>
-                <p class="text-[10px] text-slate-500 leading-relaxed">${item.advice[curV]}</p></div>`;
-        }).join('');
 
-        const metrics = [{id:"cog",n:"認知記憶 Cognition",v:scores.cog}, {id:"sppb",n:"行動表現 SPPB",v:scores.sppb}, {id:"phy",n:"肌力基礎 Strength",v:scores.phy}, {id:"ps",n:"心理社交 Psychosocial",v:scores.ps}];
-        document.getElementById('metric_comparison').innerHTML = metrics.map(m => {
-            const pV = pre ? pre.scores[m.id] : null;
-            return `<div><div class="flex justify-between text-[9px] font-black mb-1 uppercase tracking-tighter italic"><span class="text-slate-500">${m.n}</span><span>${pV!==null?`Pre:${Math.round(pV)}% → `:''}Post:${Math.round(m.v)}%</span></div>
-                <div class="flex flex-col gap-1">${pV!==null?`<div class="bg-slate-200 h-1.5 rounded-full overflow-hidden shadow-inner"><div class="bg-slate-400 h-full bar-fill" style="--w: ${pV}%"></div></div>`:''}<div class="bg-blue-100 h-2.5 rounded-full overflow-hidden border border-blue-200 shadow-inner"><div class="bg-blue-600 h-full bar-fill" style="--w: ${m.v}%"></div></div></div></div>`;
-        }).join('');
+        const metrics = [{n:"認知記憶 Memory",v:scores.cog}, {n:"行動表現 SPPB",v:scores.sppb}, {n:"地中海飲食 Diet",v:scores.diet}, {n:"心理社交 PS",v:scores.ps}];
+        document.getElementById('metric_comparison').innerHTML = metrics.map(m => `<div><div class="flex justify-between text-[9px] font-black italic mb-1 uppercase tracking-tighter"><span class="text-slate-500">${m.n}</span><span>${Math.round(m.v)}%</span></div><div class="bg-blue-100 h-2.5 rounded-full overflow-hidden border shadow-inner"><div class="bg-blue-600 h-full bar-fill" style="--w: ${m.v}%"></div></div></div>`).join('');
+    }
 
-        window.scrollTo({ top: document.body.scrollHeight, behavior: 'smooth' });
+    async function submitToGoogle() {
+        const btn = document.getElementById('sync-btn');
+        btn.innerText = "同步數據中 Syncing..."; btn.disabled = true;
+
+        const sppb = calcSPPB();
+        let dietSum = 0; for(let i=0; i<9; i++) dietSum += parseInt(document.getElementById('dq_'+i).value);
+        let cogRec = 0; for(let i=0; i<5; i++) cogRec += parseInt(document.getElementById('dm_'+i)?.value||0);
+        const cogScore = (cogRec >= 10 ? 3 : (cogRec >= 5 ? 2 : 1)) + parseInt(document.getElementById('c_time').value);
+        const psSum = parseInt(document.getElementById('ps_1').value) + parseInt(document.getElementById('ps_2').value) + parseInt(document.getElementById('ps_3').value);
+        const phyScore = (parseInt(document.getElementById('p_chair').value)||0) + (parseInt(document.getElementById('p_arm').value)||0);
+
+        const params = new URLSearchParams();
+        params.append('u_operator', sessionStorage.getItem('op'));
+        params.append('u_name', document.getElementById('b_name').value);
+        params.append('u_type', document.getElementById('b_test_type').value);
+        params.append('u_loc', document.getElementById('b_loc').value);
+        params.append('u_edu', document.getElementById('b_edu').value);
+        params.append('u_bmi', document.getElementById('rbmi').innerText);
+        params.append('u_sppb', sppb.total);
+        params.append('u_sppb_status', document.getElementById('sppb_status_text').innerText);
+        params.append('u_diet', dietSum);
+        params.append('u_diet_tag', document.getElementById('diet_tag').innerText);
+        params.append('u_total', document.getElementById('total_score_display').innerText);
+        params.append('u_health', document.getElementById('health_status').innerText);
+        params.append('u_cog', cogScore);
+        params.append('u_phy', phyScore);
+        params.append('u_ps', psSum);
+
+        try {
+            await fetch(SCRIPT_URL, { method: 'POST', mode: 'no-cors', body: params });
+            alert("✅ 雲端同步完成！資料已存入試算表。");
+            btn.innerText = "完成同步 Done"; btn.className = "w-full bg-blue-400 text-white font-black py-4 rounded-2xl italic";
+        } catch (e) {
+            alert("❌ 同步失敗，請確認網路連線。"); btn.innerText = "重試同步 Retry"; btn.disabled = false;
+        }
     }
 
     function showTab(id) { document.querySelectorAll('.tab-content').forEach(el=>el.classList.remove('active')); document.querySelectorAll('.tab-btn').forEach(el=>el.classList.remove('active')); document.getElementById('tab-'+id).classList.add('active'); document.getElementById('btn-'+id).classList.add('active'); }
-    window.onload = function() { if (sessionStorage.getItem('is_auth') === 'true') { enterApp(sessionStorage.getItem('current_op')); } };
 </script>
 </body>
 </html>
